@@ -1,0 +1,80 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class OnlineStore {
+    public static void main(String[] args) {
+        ArrayList<Product> products = new ArrayList<>();
+        products.add(new Product("Laptop", "Product 1", 10));
+        products.add(new Product("Laptop", "Product 2", 20));
+        products.add(new Product("Phone", "Product 3", 30));
+        products.add(new Product("Phone", "Product 4", 40));
+        products.add(new Product("Camera", "Product 5", 50));
+        products.add(new Product("Camera", "Product 6", 60));
+
+        Cart cart = new Cart();
+
+        Scanner scanner = new Scanner(System.in);
+        String input;
+
+        while (true) {
+            System.out.println("\nAvailable Categories:");
+            ArrayList<String> categories = getProductCategories(products);
+            for (int i = 0; i < categories.size(); i++) {
+                System.out.println((i + 1) + ". " + categories.get(i));
+            }
+
+            System.out.println("\nYour Cart:");
+            if (cart.getItems().isEmpty()) {
+                System.out.println("Your cart is empty.");
+            } else {
+                for (int i = 0; i < cart.getItems().size(); i++) {
+                    CartItem item = cart.getItems().get(i);
+                    System.out.println((i + 1) + ". " + item.getProduct().getName() + " (" + item.getProduct().getCategory() + ") - $" + item.getProduct().getPrice() + " x " + item.getQuantity());
+                }
+                System.out.println("Total: $" + cart.getTotalPrice());
+            }
+
+            System.out.println("\nEnter a category number to view products, 'c' to checkout, or 'q' to quit:");
+            input = scanner.nextLine();
+
+            if (input.equals("q")) {
+                System.out.println("Thanks for visiting our store!");
+                break;
+            }
+
+            if (input.equals("c")) {
+                if (cart.getItems().isEmpty()) {
+                    System.out.println("Your cart is empty. Please add items to your cart before checking out.");
+                } else {
+                    System.out.println("Total: $" + cart.getTotalPrice());
+                    System.out.println("\nEnter payment information to complete your purchase:");
+                    System.out.println("Card number:");
+                    String cardNumber = scanner.nextLine();
+                    System.out.println("Expiration date (MM/YY):");
+                    String expirationDate = scanner.nextLine();
+                    System.out.println("CVV:");
+                    String cvv = scanner.nextLine();
+                    System.out.println("Thanks for shopping with us! Your purchase is complete.");
+                    break;
+                }
+            }
+
+            try {
+                int categoryNumber = Integer.parseInt(input);
+                ArrayList<Product> categoryProducts = getCategoryProducts(products, categories.get(categoryNumber - 1));
+                System.out.println("\n" + categories.get(categoryNumber - 1) + " Products:");
+                for (int i = 0; i < categoryProducts.size(); i++) {
+                    Product product = categoryProducts.get(i);
+                    System.out.println((i + 1) + ". " + product.getName() + " - $" + product.getPrice());
+                }
+                System.out.println("\nEnter a product number to add to your cart, or 'b' to go back:");
+                input = scanner.nextLine();
+
+                if (input.equals("b")) {
+                    continue;
+                }
+
+                int productNumber = Integer.parseInt(input);
+                Product selectedProduct = categoryProducts.get(productNumber - 1);
+                cart.addItem(selectedProduct);
+                System.out.println(selectedProduct.getName()
